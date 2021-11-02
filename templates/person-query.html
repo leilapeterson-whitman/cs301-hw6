@@ -7,9 +7,9 @@
 <ol>
     {% for person in people %}
         {% if person.get('birthdate') %}
-        <li> <a href="{{url_for('movie_page', tt=movie.get('tt'))}}"> {{ movie.get('title') }} released in {{ movie.get('release') }} </a> </li>
+        <li> <a href="{{url_for('person_page', nm=person.get('nm'))}}"> {{ person.get('name') }} born in {{ person.get('birthdate') }} </a> </li>
         {% else %}
-        <li> <a href="{{url_for('movie_page', tt=movie.get('tt'))}}"> {{ movie.get('title') }} </a> </li>
+        <li> <a href="{{url_for('person_page', nm=person.get('nm'))}}"> {{ person.get('name') }}  </a> </li>
         {% endif %}
     {% endfor %}
 </ol>
