@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if name and birthdate %}
+<h1> {{ name }} </h1>
+<p> {{ name }}, added by {{ adder }}, was born on {{ birthdate }} </p>
+
+
+{% elif name %}
+<h1> {{ name }} </h1>
+<p> {{ name }}, added by {{ adder }}</p>
+
+
+{% else %}
+<h1> 404 Not found </h1>
+<p>The person who you are looking for does not exist in our database</p>
+
+{% endif %}
+
+{% if movies %}
+<p> Appeared in: </p>
+<ol>
+    {% for movie in movies %}
+    <li> <a href="{{url_for('movie_page', tt=movie.get('tt'))}}"> {{ movie.get('title') }} </a> </li>
+    {% endfor %}
+</ol>
+{% endif %}
+
+
+{% endblock %}

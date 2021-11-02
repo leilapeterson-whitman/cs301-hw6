@@ -11,12 +11,36 @@ def movie_page(tt):
     conn = dbi.connect()
     curs = dbi.dict_cursor(conn)
     curs.execute('select * from movie limit 10')
-    #curs.execute('select title from movie where tt=%s', [tt])
-    #movieResult = curs.fetchall()
-    #name = movieResult[0].get('title')
-    #releaseYear = movieResult[0].get('release')
+    curs.execute('select title from movie where tt=%s', [tt])
+    movieResult = curs.fetchall()
+    name = movieResult[0].get('title')
+    releaseYear = movieResult[0].get('release')
     conn.commit()
     return render_template("movie.html")
+
+@app.route('/nm/<nm>', methods=["GET"])
+def person_page(nm):
+
+    conn = dbi.connect()
+    curs = dbi.dict_cursor(conn)
+    curs.execute('select name,birthdate from person where nm=%s', [nm])
+    personRes = curs.fetchall()
+    if (curs.rowcount == 1):
+        name = personRes[0].get('name')
+        birthDate = personRes[0].get('birthdate')
+    else:
+        name = None
+        birthDate = None
+
+    curs.execute('select title, movie.tt from movie inner join credit on credit.tt=movie.tt where nm=%s', [nm])
+    movieRes = curs.fetchall()
+    if curs.rowcount == 0:
+        movieRes = None
+
+    conn.commit()
+    
+    return render_template("actor.html", name=name, adder="Leila Peterson", birthdate=birthDate, movies=movieRes)
+
 
 @app.before_first_request
 def init_db():
