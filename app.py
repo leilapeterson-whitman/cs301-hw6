@@ -47,7 +47,7 @@ def person_page(nm):
 
     conn.commit()
     
-    return render_template("actor.html", name=name, adder="Leila Peterson", birthdate=birthDate, movies=movieRes)
+    return render_template("person.html", name=name, adder="Leila Peterson", birthdate=birthDate, movies=movieRes)
 
 @app.route('/query/', methods=["GET"])
 def query_page():
