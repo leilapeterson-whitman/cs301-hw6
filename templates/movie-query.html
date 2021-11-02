@@ -2,24 +2,8 @@
 
 {% block content %}
 
-{% if name and birthdate %}
-<h1> {{ name }} </h1>
-<p> {{ name }}, added by {{ adder }}, was born on {{ birthdate }} </p>
-
-
-{% elif name %}
-<h1> {{ name }} </h1>
-<p> {{ name }}, added by {{ adder }}</p>
-
-
-{% else %}
-<h1> 404 Not found </h1>
-<p>The person who you are looking for does not exist in our database</p>
-
-{% endif %}
-
 {% if movies %}
-<p> Appeared in: </p>
+<p> Movies matching {{ query }}: </p>
 <ol>
     {% for movie in movies %}
         {% if movie.get('release') %}
@@ -30,6 +14,5 @@
     {% endfor %}
 </ol>
 {% endif %}
-
 
 {% endblock %}
