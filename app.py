@@ -29,7 +29,7 @@ def movie_page(tt):
 @app.route('/nm/<nm>', methods=["GET"])
 def person_page(nm):
 
-    conn = dbi.connect()
+    conn = dbi.connect()   
     curs = dbi.dict_cursor(conn)
     curs.execute('select name,birthdate from person where nm=%s', [nm])
     personRes = curs.fetchall()
@@ -40,7 +40,7 @@ def person_page(nm):
         name = None
         birthDate = None
 
-    curs.execute('select title, movie.tt from movie inner join credit on credit.tt=movie.tt where nm=%s', [nm])
+    curs.execute('select title, `release`, movie.tt from movie inner join credit on credit.tt=movie.tt where nm=%s', [nm])
     movieRes = curs.fetchall()
     if curs.rowcount == 0:
         movieRes = None
@@ -54,6 +54,14 @@ def query_page():
     kind = request.args.get("kind")
     query = request.args.get("query")
     print(kind, query)
+    conn = dbi.connect()
+    curs = dbi.dict_cursor(conn)
+    if kind == 'movie':
+        curs.execute('select title, `release`, tt from movie where lower(title) like lower(%%%s%%)', [query])
+        movieRes = curs.fetchall()
+        if curs.rowcount == 0:
+            movieRes = None
+        return render_template("movie-query.html", query=query, movies = movieRes)
     return render_template("base.html")
 
 @app.before_first_request

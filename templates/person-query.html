@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for person in persons %}
+<ol>
+    <li> {{ person.get('name') }}</li>
+</ol>
+
+{% endfor %}
+
+{% endblock %}
