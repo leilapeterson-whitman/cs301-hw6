@@ -41,6 +41,12 @@ def person_page(nm):
     
     return render_template("actor.html", name=name, adder="Leila Peterson", birthdate=birthDate, movies=movieRes)
 
+@app.route('/query/', methods=["GET"])
+def query_page():
+    kind = request.args.get("kind")
+    query = request.args.get("query")
+    print(kind, query)
+    return render_template("base.html")
 
 @app.before_first_request
 def init_db():
