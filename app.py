@@ -45,7 +45,7 @@ def person_page(nm):
 
     conn = dbi.connect()   
     curs = dbi.dict_cursor(conn)
-    curs.execute('select name,birthdate, addedby from person where nm=%s', [nm])
+    curs.execute('select name,birthdate, addedby from person where nm=\'{}\''.format(nm))
     personRes = curs.fetchall()
     if (curs.rowcount == 1):
         name = personRes[0].get('name')
@@ -77,21 +77,26 @@ def person_page(nm):
 def query_page():
     kind = request.args.get("kind")
     query = request.args.get("query")
-    print(kind, query)
-    conn = dbi.connect()
+    conn = dbi.connect()   
     curs = dbi.dict_cursor(conn)
     if kind == 'movie':
         curs.execute( ('select title, `release`, tt from movie where lower(title) like lower(\'%{}%\')'.format(query)) )
         movieRes = curs.fetchall()
-        if curs.rowcount == 0:
-            movieRes = None
-        return render_template("movie-query.html", query=query, movies = movieRes)
+        rows = curs.rowcount
+        if rows == 1:
+            tt = movieRes[0].get('tt')
+            return redirect( url_for('movie_page', tt=str(tt)) )
+        else:
+            return render_template("movie-query.html", query=query, movies = movieRes)
     if kind == 'person':
         curs.execute( ('select name, birthdate, nm from person where lower(name) like lower(\'%{}%\')'.format(query)) )
         personRes = curs.fetchall()
-        if curs.rowcount == 0:
-            personRes = None
-        return render_template("person-query.html", query=query, persons = personRes)
+        rows = curs.rowcount
+        if rows == 1:
+            nm = personRes[0].get('nm')
+            return redirect( url_for('person_page', nm=str(nm)) )
+        else:
+            return render_template("person-query.html", query=query, persons = personRes)
     return render_template("error.html")
 
 @app.before_first_request
