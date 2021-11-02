@@ -62,6 +62,12 @@ def query_page():
         if curs.rowcount == 0:
             movieRes = None
         return render_template("movie-query.html", query=query, movies = movieRes)
+    if kind == 'person':
+        curs.execute('select name,birthdate, nm from person where lower(name) like lower(%%%s%%)', [query])
+        personRes = curs.fetchall()
+        if curs.rowcount == 0:
+            personRes = None
+        return render_template("person-query.html", query=query, persons = personRes)
     return render_template("base.html")
 
 @app.before_first_request
