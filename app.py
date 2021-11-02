@@ -10,13 +10,21 @@ def home():
 def movie_page(tt):
     conn = dbi.connect()
     curs = dbi.dict_cursor(conn)
-    curs.execute('select * from movie limit 10')
-    curs.execute('select title from movie where tt=%s', [tt])
+    curs.execute('select title,`release` from movie where tt=%s', [tt])
     movieResult = curs.fetchall()
-    name = movieResult[0].get('title')
-    releaseYear = movieResult[0].get('release')
+    if (curs.rowcount == 1):
+        title = movieResult[0].get('title')
+        releaseYear = movieResult[0].get('release')
+    else:
+        title = None
+        releaseYear = None
+
+    curs.execute('select name, person.nm from person inner join credit on person.nm=credit.nm where tt=%s', [tt])
+    personResult = curs.fetchall()
+    if curs.rowcount == 0:
+        personResult = None
     conn.commit()
-    return render_template("movie.html")
+    return render_template("movie.html", title=title, release = releaseYear, cast = personResult)
 
 @app.route('/nm/<nm>', methods=["GET"])
 def person_page(nm):
@@ -50,7 +58,7 @@ def query_page():
 
 @app.before_first_request
 def init_db():
-    dbi.cache_cnf()
+    dbi.cache_cnf(db='wmdb')
     # we omit the dbi.use() so that you'll get your personal db
 
 if __name__ == '__main__':
