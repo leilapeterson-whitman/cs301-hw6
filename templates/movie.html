@@ -1,11 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
+
+{% if title and release %}
+
 <h1> {{ title }} </h1>
 <p> {{ title }} was released in {{ release }} </p>
 
-<p>Cast:</p>
+{% elif title %}
+<h1> {{ title }} </h1>
+<p> {{ title }} </p>
+
+{% else %}
+<h1> 404 Not found </h1>
+<p>The movie you are looking for does not exist in our database</p>
+
+{% endif %}
+
+{% if cast %}
+<p> Cast: </p>
 <ol>
-    <li>Dev Patel</li>
-    <li>Alicia Vikander</li>
+    {% for person in cast %}
+    <li> <a href="{{url_for('person_page', nm=person.get('nm'))}}"> {{ person.get('name') }} </a> </li>
+    {% endfor %}
 </ol>
+{% endif %}
+
 {% endblock %}
