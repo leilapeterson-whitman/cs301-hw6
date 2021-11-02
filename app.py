@@ -19,7 +19,7 @@ def movie_page(tt):
         title = None
         releaseYear = None
 
-    curs.execute('select name, person.nm from person inner join credit on person.nm=credit.nm where tt=%s', [tt])
+    curs.execute('select name, person.nm, birthdate from person inner join credit on person.nm=credit.nm where tt=%s', [tt])
     personResult = curs.fetchall()
     if curs.rowcount == 0:
         personResult = None
@@ -57,7 +57,7 @@ def query_page():
     conn = dbi.connect()
     curs = dbi.dict_cursor(conn)
     if kind == 'movie':
-        curs.execute('select title, `release`, tt from movie where lower(title) like lower(%%%s%%)', [query])
+        curs.execute( ('select title, `release`, tt from movie where lower(title) like \'%{}%\''.format(query)) )
         movieRes = curs.fetchall()
         if curs.rowcount == 0:
             movieRes = None

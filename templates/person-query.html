@@ -2,11 +2,17 @@
 
 {% block content %}
 
-{% for person in persons %}
+{% if people %}
+<p> People matching {{ query }}: </p>
 <ol>
-    <li> {{ person.get('name') }}</li>
+    {% for person in people %}
+        {% if person.get('birthdate') %}
+        <li> <a href="{{url_for('movie_page', tt=movie.get('tt'))}}"> {{ movie.get('title') }} released in {{ movie.get('release') }} </a> </li>
+        {% else %}
+        <li> <a href="{{url_for('movie_page', tt=movie.get('tt'))}}"> {{ movie.get('title') }} </a> </li>
+        {% endif %}
+    {% endfor %}
 </ol>
-
-{% endfor %}
+{% endif %}
 
 {% endblock %}
