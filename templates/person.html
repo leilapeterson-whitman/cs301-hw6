@@ -2,14 +2,23 @@
 
 {% block content %}
 
-{% if name and birthdate %}
+{% if name and birthdate and adder %}
 <h1> {{ name }} </h1>
 <p> {{ name }}, added by {{ adder }}, was born on {{ birthdate }} </p>
 
 
-{% elif name %}
+{% elif name and adder %}
 <h1> {{ name }} </h1>
 <p> {{ name }}, added by {{ adder }}</p>
+
+{% elif name and birthdate %}
+<h1> {{ name }} </h1>
+<p> {{ name }}, added by anonymous, was born on {{ birthdate }}</p>
+
+
+{% elif name %}
+<h1> {{ name }} </h1>
+<p> {{ name }} was added by anonymous</p>
 
 
 {% else %}

@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+    <style>
+        {% block style %}
+        {% endblock %}
+    </style>
+</head>
+
 <body>
     <form action="/query/">
         <label for="queryinput">Search:</label> 
@@ -16,4 +24,5 @@
     {% block content %}
     {% endblock %}
 </body>
+
 </html>

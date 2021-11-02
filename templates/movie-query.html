@@ -13,6 +13,8 @@
         {% endif %}
     {% endfor %}
 </ol>
+{% else %}
+<p>No results were found for {{ query }}</p>
 {% endif %}
 
 {% endblock %}

@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% if title and release %}
-
+{% if title and release and adder %}
 <h1> {{ title }} </h1>
-<p> {{ title }} was released in {{ release }} </p>
+<p> {{ title }}, added by {{ adder }}, was released in {{ release }} </p>
+
+{% elif title and adder%}
+<h1> {{ title }} </h1>
+<p> {{ title }} was added by {{ adder }} </p>
+
+{% elif title and release %}
+<h1> {{ title }} </h1>
+<p> {{ title }}, added by anonymous, was released in {{ release }} </p>
 
 {% elif title %}
 <h1> {{ title }} </h1>
-<p> {{ title }} </p>
+<p> {{ title }} was added by anonymous </p>
 
 {% else %}
 <h1> 404 Not found </h1>

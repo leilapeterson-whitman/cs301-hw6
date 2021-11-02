@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block style %}
+.linkEx{
+    display: inline;
+    
+}
+{% endblock %}
+
+{% block content %}
+<h1>About</h1>
+<h3>This application is what IMDB wishes it were</h3>
+    <p>An example of an actress: <a href="{{url_for('person_page', nm=5896355)}}">Anya Taylor-Joy</a></p>
+
+<div class="linkEx">
+    <p>An example of a movie: <a href="{{url_for('movie_page', tt=147800)}}"> 10 Things I Hate About You</a></p>
+    
+</div>
+
+<p>Created by Stephanie Fulton and Leila Peterson</p>
+
+{% endblock %}

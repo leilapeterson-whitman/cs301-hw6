@@ -4,50 +4,74 @@ import cs304dbi as dbi
 
 @app.route('/')
 def home():
-    return render_template("base.html")
+    return render_template("home.html")
 
 @app.route('/tt/<tt>', methods=["GET"])
 def movie_page(tt):
+    if not str.isdigit(tt):
+        return render_template("error.html")
+
     conn = dbi.connect()
     curs = dbi.dict_cursor(conn)
-    curs.execute('select title,`release` from movie where tt=%s', [tt])
+    curs.execute('select title,`release`, addedby from movie where tt=%s', [tt])
     movieResult = curs.fetchall()
     if (curs.rowcount == 1):
         title = movieResult[0].get('title')
         releaseYear = movieResult[0].get('release')
+        adder = movieResult[0].get('addedby')
     else:
-        title = None
-        releaseYear = None
+        name = None
+        birthDate = None
+        adder = None
+    if adder:
+        curs.execute('select name from staff where uid={}'.format(adder))
+        staffRes = curs.fetchall()
+        if curs.rowcount == 1:
+            adder = staffRes[0].get('name')
+        else:
+            adder= None
 
     curs.execute('select name, person.nm, birthdate from person inner join credit on person.nm=credit.nm where tt=%s', [tt])
     personResult = curs.fetchall()
     if curs.rowcount == 0:
         personResult = None
     conn.commit()
-    return render_template("movie.html", title=title, release = releaseYear, cast = personResult)
+    return render_template("movie.html", title=title, release = releaseYear, adder=adder, cast = personResult)
 
 @app.route('/nm/<nm>', methods=["GET"])
 def person_page(nm):
+    if not str.isdigit(nm):
+        return render_template("error.html")
 
     conn = dbi.connect()   
     curs = dbi.dict_cursor(conn)
-    curs.execute('select name,birthdate from person where nm=%s', [nm])
+    curs.execute('select name,birthdate, addedby from person where nm=%s', [nm])
     personRes = curs.fetchall()
     if (curs.rowcount == 1):
         name = personRes[0].get('name')
         birthDate = personRes[0].get('birthdate')
+        adder = personRes[0].get('addedby')
     else:
         name = None
         birthDate = None
+        adder = None
+    if adder:
+        curs.execute('select name from staff where uid={}'.format(adder))
+        staffRes = curs.fetchall()
+        if curs.rowcount == 1:
+            adder = staffRes[0].get('name')
+        else:
+            adder = None
 
     curs.execute('select title, `release`, movie.tt from movie inner join credit on credit.tt=movie.tt where nm=%s', [nm])
     movieRes = curs.fetchall()
     if curs.rowcount == 0:
         movieRes = None
 
+    curs.execute
     conn.commit()
     
-    return render_template("person.html", name=name, adder="Leila Peterson", birthdate=birthDate, movies=movieRes)
+    return render_template("person.html", name=name, adder=adder, birthdate=birthDate, movies=movieRes)
 
 @app.route('/query/', methods=["GET"])
 def query_page():
@@ -57,18 +81,18 @@ def query_page():
     conn = dbi.connect()
     curs = dbi.dict_cursor(conn)
     if kind == 'movie':
-        curs.execute( ('select title, `release`, tt from movie where lower(title) like \'%{}%\''.format(query)) )
+        curs.execute( ('select title, `release`, tt from movie where lower(title) like lower(\'%{}%\')'.format(query)) )
         movieRes = curs.fetchall()
         if curs.rowcount == 0:
             movieRes = None
         return render_template("movie-query.html", query=query, movies = movieRes)
     if kind == 'person':
-        curs.execute('select name,birthdate, nm from person where lower(name) like lower(%%%s%%)', [query])
+        curs.execute( ('select name, birthdate, nm from person where lower(name) like lower(\'%{}%\')'.format(query)) )
         personRes = curs.fetchall()
         if curs.rowcount == 0:
             personRes = None
         return render_template("person-query.html", query=query, persons = personRes)
-    return render_template("base.html")
+    return render_template("error.html")
 
 @app.before_first_request
 def init_db():
