@@ -6,6 +6,18 @@ import cs304dbi as dbi
 def home():
     return render_template("base.html")
 
+@app.route('/tt/<tt>', methods=["GET"])
+def movie_page(tt):
+    conn = dbi.connect()
+    curs = dbi.dict_cursor(conn)
+    curs.execute('select * from movie limit 10')
+    #curs.execute('select title from movie where tt=%s', [tt])
+    #movieResult = curs.fetchall()
+    #name = movieResult[0].get('title')
+    #releaseYear = movieResult[0].get('release')
+    conn.commit()
+    return render_template("movie.html")
+
 @app.before_first_request
 def init_db():
     dbi.cache_cnf()
