@@ -20,8 +20,8 @@ def movie_page(tt):
         releaseYear = movieResult[0].get('release')
         adder = movieResult[0].get('addedby')
     else:
-        name = None
-        birthDate = None
+        title = None
+        releaseYear = None
         adder = None
     if adder:
         curs.execute('select name from staff where uid={}'.format(adder))
@@ -77,27 +77,27 @@ def person_page(nm):
 def query_page():
     kind = request.args.get("kind")
     query = request.args.get("query")
+    returnTemplate = render_template("error.html")
     conn = dbi.connect()   
     curs = dbi.dict_cursor(conn)
     if kind == 'movie':
         curs.execute( ('select title, `release`, tt from movie where lower(title) like lower(\'%{}%\')'.format(query)) )
         movieRes = curs.fetchall()
-        rows = curs.rowcount
-        if rows == 1:
+        if curs.rowcount == 1:
             tt = movieRes[0].get('tt')
-            return redirect( url_for('movie_page', tt=str(tt)) )
+            returnTemplate = redirect( url_for('movie_page', tt=str(tt)) )
         else:
-            return render_template("movie-query.html", query=query, movies = movieRes)
+            returnTemplate = render_template("movie-query.html", query=query, movies = movieRes)
     if kind == 'person':
         curs.execute( ('select name, birthdate, nm from person where lower(name) like lower(\'%{}%\')'.format(query)) )
         personRes = curs.fetchall()
-        rows = curs.rowcount
-        if rows == 1:
+        if curs.rowcount == 1:
             nm = personRes[0].get('nm')
-            return redirect( url_for('person_page', nm=str(nm)) )
+            returnTemplate = redirect( url_for('person_page', nm=str(nm)) )
         else:
-            return render_template("person-query.html", query=query, persons = personRes)
-    return render_template("error.html")
+            returnTemplate = render_template("person-query.html", query=query, persons = personRes)
+    conn.commit()
+    return returnTemplate
 
 @app.before_first_request
 def init_db():
